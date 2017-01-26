@@ -2,6 +2,10 @@ import java.util.Scanner;
 
 public class GuessDT{
 
+	/**
+	 * Algorithm: Have an implementation of each type an try them, compare answer or catch exceptions
+	 * @param args
+	 */
     public static void main(String[] args){
     	
         Scanner sc = new Scanner(System.in);
@@ -31,7 +35,6 @@ public class GuessDT{
             System.out.println(result);
         }
         sc.close();
-        System.out.println("Done");
         System.exit(0);
     }
     
@@ -45,15 +48,15 @@ public class GuessDT{
     			int element;
     			try{
     				element = qDT.remove();
-    				if (element == sample[i][1]){
-    					return 1;
+    				if (element != sample[i][1]){
+    					return 0;
     				}
     			}catch(java.util.NoSuchElementException e){
     				return 0;
     			}
     		}
     	}
-    	return 0;
+    	return 1;
     }
     
     public static int testStack(int[][] sample){
