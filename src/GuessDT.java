@@ -4,7 +4,6 @@ public class GuessDT{
 
     public static void main(String[] args){
     	
-    	int testnum =1;
         Scanner sc = new Scanner(System.in);
         while(sc.hasNextLong()) {
             long nextInputCount = sc.nextLong();
@@ -14,14 +13,25 @@ public class GuessDT{
             	sample[i][0] = (int) sc.nextLong();
             	sample[i][1] = (int) sc.nextLong();
             }
-            System.out.println("Test: "+testnum);
             int a = testQueue(sample);
             int b = testStack(sample);
             int c = testPriorityQueue(sample);
-            System.out.println("Queue: "+a+"\nStack: "+b+"\nPriority Queue: "+c+"\n");
-            
-            testnum++;
+            String result = "";
+            if(a+b+c == 0){
+            	result = "impossible";
+            }else if(a+b+c >1){
+            	result = "not sure";
+            }else if(a == 1){
+            	result = "queue";
+            }else if(b == 1){
+            	result = "stack";
+            }else if(c == 1){
+            	result = "priority queue";
+            }
+            System.out.println(result);
         }
+        sc.close();
+        System.out.println("Done");
         System.exit(0);
     }
     
@@ -67,7 +77,7 @@ public class GuessDT{
     }
     
     public static int testPriorityQueue(int[][] sample){
-    	java.util.PriorityQueue<Integer> pqDT = new java.util.PriorityQueue<Integer>();
+    	java.util.PriorityQueue<Integer> pqDT = new java.util.PriorityQueue<Integer>(11, java.util.Collections.reverseOrder());
     	for(int i = 0; i< sample.length; i++){
     		if(sample[i][0] == 1){
     			pqDT.add(sample[i][1]);
