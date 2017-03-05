@@ -16,19 +16,19 @@ public class orders {
 		Scanner sc = new Scanner(System.in);
 		while(sc.hasNextLong()) {
 			//initialisation
-			int n = sc.nextInt();	//First num, number of items on the menu
+ 			int n = sc.nextInt();	//First num, number of items on the menu
 			prices = new int[n];	// Prices of the items
+			min = 9999999;
 			for(int i=0; i<n; i++){
 				prices[i] = sc.nextInt();
+				if(prices[i] < min){
+					min = prices[i];
+				}
 			}
 			int m = sc.nextInt();	// Number of orders
 			int orders[] = new int[m];
-			min = 9999999;
 			for(int i=0; i<n; i++){
 				orders[i] = sc.nextInt();
-				if (orders[i] < min){
-					min = orders[i];
-				}
 			}
 			remember = new HashMap<Integer,String>();	//Used for memoization
 
@@ -55,10 +55,22 @@ public class orders {
 		total == price, return price
 		total < price, return impossible
 
+		TODO handle case where an item is a multiple of another
+
 		 */
         if(total < min){
             return impossible;
         }
+        //Check if the current total is a possible item
+        for(int i=0; i< prices.length; i++){
+        	if(prices[i] == total){
+        		//Solution found, unroll the stack and add to solution
+    			//return Integer.toString(prices[i]);
+        		return Integer.toString(i+1);
+        	}
+	        
+		}
+        
 
         ArrayList<String> answs = new ArrayList<String>();
         int impCount = 0;
@@ -66,11 +78,7 @@ public class orders {
         int solCount = 0;
         int solIndex = -1;
 		for(int i=0; i< prices.length; i++){
-			//Base case
-		    if(total == prices[i]) {
-		        //Solution found, unroll the stack and add to solution
-				return Integer.toString(prices[i]);
-			}
+		   
 
 			// Find the answer for the sub problem using the memoization lookup
 			String result = lookup(total-prices[i]);
