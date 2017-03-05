@@ -61,21 +61,24 @@ public class orders {
         if(total < min){
             return impossible;
         }
+        
+        ArrayList<String> answs = new ArrayList<String>();
+        
         //Check if the current total is a possible item
         for(int i=0; i< prices.length; i++){
         	if(prices[i] == total){
-        		//Solution found, unroll the stack and add to solution
-    			//return Integer.toString(prices[i]);
-        		return Integer.toString(i+1);
+        		if(total == min){
+        			//Solution found, unroll the stack and add to solution
+            		return Integer.toString(i+1);
+        		}else{
+        			//We found a solution but there might be others under
+        			answs.add(Integer.toString(i+1));
+        		}
         	}
-	        
 		}
         
 
-        ArrayList<String> answs = new ArrayList<String>();
-       
 		for(int i=0; i< prices.length; i++){
-		   
 
 			// Find the answer for the sub problem using the memoization lookup
 			String result = lookup(total-prices[i]);

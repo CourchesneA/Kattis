@@ -12,5 +12,6 @@ public class template{
 
             System.out.println(a);
         }
+        sc.close();
     }
 }
