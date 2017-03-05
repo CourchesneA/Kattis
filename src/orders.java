@@ -1,5 +1,5 @@
-import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -27,7 +27,7 @@ public class orders {
 			}
 			int m = sc.nextInt();	// Number of orders
 			int orders[] = new int[m];
-			for(int i=0; i<n; i++){
+			for(int i=0; i<m; i++){
 				orders[i] = sc.nextInt();
 			}
 			remember = new HashMap<Integer,String>();	//Used for memoization
@@ -53,7 +53,7 @@ public class orders {
 
 		Base cases
 		total == price, return price
-		total < price, return impossible
+	 	total < price, return impossible
 
 		TODO handle case where an item is a multiple of another
 
@@ -73,37 +73,33 @@ public class orders {
         
 
         ArrayList<String> answs = new ArrayList<String>();
-        int impCount = 0;
-        int ambCount = 0;
-        int solCount = 0;
-        int solIndex = -1;
+       
 		for(int i=0; i< prices.length; i++){
 		   
 
 			// Find the answer for the sub problem using the memoization lookup
 			String result = lookup(total-prices[i]);
-		    answs.add(i, result);
+		    //answs.add(i, result);	//TODO remove this ?
 
 		    if(result.equals(impossible)){
-		    	impCount++;
+		    	continue;
 			}else if(result.equals(ambiguous)){
-		    	ambCount++;
+		    	return ambiguous;
 			}else{
-				solCount++;
-				solIndex = i;
+				answs.add(result+" "+Integer.toString(i+1));
 			}
 		}
 
 		//Interpret the result array list
-		if (impCount == prices.length){
-			return impossible;	//No solution found
-		}else if(ambCount > 0 || solCount > 1){
-			return ambiguous;
-		}else if(solCount == 1){
-			return prices[solIndex] + " " + answs.get(solIndex);
+		if(answs.size() == 0){
+			return impossible;
+		}else if(answs.size() == 1){
+			return answs.get(0);
 		}else{
-			return "Error";
-		}
+			// check if more than one solution are the same
+			// 
+			return checkDuplicates(answs);
+		}	
 	}
 
 	public static String lookup(int price){
@@ -115,5 +111,52 @@ public class orders {
 		remember.put(price, answer);
 		return answer;
 	}
+	
+	public static String checkDuplicates(ArrayList<String> list){
+		//Return an AL of string which contains only one instance of every ordered string
+		
+		//Check if there are more than one instance of every string when we order the values
+		ArrayList<ArrayList<Integer>> sols = new ArrayList<ArrayList<Integer>>();
+		for(int i=0; i< list.size(); i++){
+			sols.add(i, new ArrayList<Integer>());
+			
+			String str = list.get(i);
+			String[] elems = str.split(" ");
+			for(String elem:elems){
+				sols.get(i).add(Integer.parseInt(elem));
+			}
+			sols.get(i).sort(new IntComparator());
+		}
+		
+		//Now we have an AL of sorted AL<int>, we want to remove duplicates
+		ArrayList<ArrayList<Integer>> rval = new ArrayList<ArrayList<Integer>>();
+		for(int i=0; i< sols.size(); i++){
+//			String str = "";
+//			for(int j=0; j<sols.get(i).size(); j++, str+=" "){
+//				str+=sols.get(i).get(j);
+//			}
+			if(!rval.contains(sols.get(i))){
+				rval.add(sols.get(i));
+			}
+		}
+		if(rval.size() == 1){
+			String str = Integer.toString(rval.get(0).get(0));
+			for(int i=1; i<rval.get(0).size();i++){
+				str+=" "+ Integer.toString(rval.get(0).get(i));
+			}
+			return str;
+		}else{
+			return ambiguous;
+		}
 
+	}
+
+	
+}
+class IntComparator implements Comparator<Integer> {
+
+    @Override
+    public int compare(Integer v1, Integer v2) {
+        return v1 < v2 ? -1 : v1 > v2 ? +1 : 0;
+    }
 }
