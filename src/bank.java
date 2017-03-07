@@ -2,6 +2,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 /**
@@ -12,28 +14,32 @@ public class bank {
 
     public static void main(String[] args){
 
-        try {
-            System.setIn(new FileInputStream(new File("sample.in")));
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-            e.printStackTrace();
-        }
-
         Scanner sc = new Scanner(System.in);
         while(sc.hasNextInt()) {
             int totalPeople = sc.nextInt(); //Number of people
             int closeTime = sc.nextInt(); //Time before closing
 
             ArrayList<People> peoples = new ArrayList<People>();
+
             for(int i=0; i < totalPeople; i++){
                 //for each people
                 int c = sc.nextInt();
                 int t = sc.nextInt();
-                peoples.add(new People(c,t));
+                People p = new People(c,t);
+                peoples.add(p);
             }
-            for(int curTime = 0; curTime < closeTime; i++ ) { //Assert we do not serve at closing time
-
+            peoples.sort(new TimeComparator());	//Later times first
+            
+            int bankCash = 0;
+            //Greedy solution on time, inverse loop
+            for(int curTime = closeTime; curTime >= 0; curTime--){
+            	//Check if there are people that are willing to wait that much time
+            	
+            	//Take the most paying
+            	
+            	//Decrement time
             }
+            System.out.println(bankCash);
         }
         sc.close();
     }
@@ -48,3 +54,26 @@ class People{
         this.leaveTime = time;
     }
 }
+class TimeComparator implements Comparator<People>{
+	public int compare(People p1, People p2) {
+		if(p1.leaveTime > p2.leaveTime){
+			return -1;
+		}else if (p1.leaveTime == p2.leaveTime){
+			return 0;
+		}else{
+			return 1;
+		}
+	}
+}
+class CashComparator implements Comparator<People>{
+	public int compare(People p1, People p2) {
+		if(p1.cash > p2.cash){
+			return -1;
+		}else if (p1.cash == p2.cash){
+			return 0;
+		}else{
+			return 1;
+		}
+	}
+}
+
