@@ -34,7 +34,16 @@ public class bank {
             //Greedy solution on time, inverse loop
             for(int curTime = closeTime; curTime >= 0; curTime--){
             	//Check if there are people that are willing to wait that much time
-            	
+                //Order people on reverse time
+                for(People person:peoples){
+                    if(person.leaveTime < curTime){
+                        break;  //The last leaving person will leave before this minute to do nothing
+                    }else{
+                        //We should create a heap with all the possible people
+                        //Then get and remove the the richest
+                    }
+                }
+
             	//Take the most paying
             	
             	//Decrement time
