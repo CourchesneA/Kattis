@@ -36,12 +36,30 @@ public class orders {
 			//Idea: Solve using dynamic programming and memoization
 
 			for(int total:orders){
-				System.out.println(lookup(total));
+				if(prices[0] == 1 && prices.length==1){
+					System.out.println(onesTime(total));
+				}else{
+					System.out.println(lookup(total));
+				}
 			}
 
 
 		}
 		sc.close();
+	}
+
+	public static String onesTime(int total){
+		//Special case if there is only 1 in prices matrix
+		if(remember.get(total) != null){
+			return remember.get(total);
+		}
+
+		String str = "1";
+		for(int i=1; i<total; i++){
+			str+=" 1";
+		}
+		remember.put(total, str);
+		return str;
 	}
 
 	public static String findOrder(int total){
