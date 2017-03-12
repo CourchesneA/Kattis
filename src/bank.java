@@ -1,10 +1,7 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by anthony on 3/6/17.
@@ -19,7 +16,7 @@ public class bank {
             int totalPeople = sc.nextInt(); //Number of people
             int closeTime = sc.nextInt(); //Time before closing
 
-            ArrayList<People> peoples = new ArrayList<People>();
+            PriorityQueue<People> peoples = new PriorityQueue<People>(new TimeComparator());
 
             for(int i=0; i < totalPeople; i++){
                 //for each people
@@ -28,14 +25,14 @@ public class bank {
                 People p = new People(c,t);
                 peoples.add(p);
             }
-            peoples.sort(new TimeComparator());	//Later times first
-            
+
             int bankCash = 0;
             //Greedy solution on time, inverse loop
             for(int curTime = closeTime; curTime >= 0; curTime--){
             	//Check if there are people that are willing to wait that much time
                 //Order people on reverse time
-                for(People person:peoples){
+                People person;
+                while((person = peoples.peek()).leaveTime < curTime){   //TODO check;
                     if(person.leaveTime < curTime){
                         break;  //The last leaving person will leave before this minute to do nothing
                     }else{
