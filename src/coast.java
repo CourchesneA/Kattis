@@ -1,9 +1,8 @@
-import java.util.HashSet;
+//TODO use array instead of linked list
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
-//TODO att a layer of water
 //then run BFS
 public class coast {
 	
@@ -36,7 +35,8 @@ public class coast {
 	            
 	            int coastKm = 0;
 	            //Run BFS from 0,0, add 1 when neighbor is land tile
-	            LinkedList<Position> visited = new LinkedList<Position>();
+	            //LinkedList<Position> visited = new LinkedList<Position>();
+	            int[][] visited = new int[n+2][m+2];
 	   		 	Queue<Position> queue = new LinkedList<Position>();
 	   		 	queue.add(new Position(0,0));
 	   		 	while(!queue.isEmpty()){
@@ -46,7 +46,14 @@ public class coast {
 	   		 			int addToN = (int) Math.round(Math.cos((Math.PI/2)*i)); //1 0 -1 0
 	   		 			int addToM = (int) Math.round(Math.sin((Math.PI/2)*i)); //0 1 0 -1
 	   		 			Position newPosition = new Position(currentPosition.n+addToN,currentPosition.m+addToM);
-	   		 			if(visited.contains(newPosition)){
+	   		 			//Check if neighbor is outof bound
+	   		 			int gridVal;
+	   		 			try{
+	   		 				gridVal = visited[newPosition.n][newPosition.m];
+	   		 			}catch(ArrayIndexOutOfBoundsException e){
+	   		 				gridVal = 1;
+	   		 			}
+	   		 			if(visited[newPosition.n][newPosition.m] == 1 ){ //TODO check outofbound
 	   		 				continue;
 	   		 			}
 	   		 			int tileValue;	//Grid value of the new position: 1 = land, out or water = 0
@@ -65,7 +72,7 @@ public class coast {
 	   		 			}
 	   		 			
 	   		 		}
-	   		 		visited.add(currentPosition);
+	   		 		visited[currentPosition.n][currentPosition.m] = 1;
 	   		 	}
 	            
 	            System.out.println(coastKm);
