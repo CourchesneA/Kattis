@@ -6,7 +6,6 @@ import java.util.Scanner;
 //TODO att a layer of water
 //then run BFS
 public class coast {
-	 static int[][] grid;
 	
 	 public static void main(String[] args){
 	
@@ -17,132 +16,62 @@ public class coast {
 	            int m = sc.nextInt();
 
 	            //Parse the input in a 2D array
-	            grid = new int[n][m];
+	            int[][] grid = new int[n+2][m+2];	//Add extra water contour
 	            sc.nextLine();	//Advance the stream to next line
-	            for(int i=0; i < n; i++){
-	            	String s = sc.nextLine();
-	            	for(int j=0; j< m; j++){
-	            		grid[i][j] = s.charAt(j)-48;
+	            for(int i=0; i < n+2; i++){
+	            	if(i==0 || i == n+1){
+	            		continue;
 	            	}
-	            }
-	            
-	            //Identify inside lake as -1
-	            for(int i=0; i < n; i++){
-	            	for(int j=0; j< m; j++){
-	            		if(grid[i][j] == 0){
-	            			removeLake(new Position(i,j));
+	            	String s = sc.nextLine();
+	            	for(int j=0; j< m+2; j++){
+	            		if(j == 0 || j == m+1){
+	            			continue;
+	            		}else{
+	            			grid[i][j] = s.charAt(0)-48;
+	            			s= s.substring(1);
 	            		}
 	            		
 	            	}
 	            }
 	            
 	            int coastKm = 0;
-	            //Scan all the horizontal edges
-	            for(int i=0; i < n+1; i++){
-	            	for(int j=0; j< m+1; j++){
-	            		int topTile;
-	            		int underTile;
-	            		try{
-	            			topTile = grid[i-1][j];
-	            		}catch(ArrayIndexOutOfBoundsException e){
-	            			topTile = 2;
-	            		}
-	            		try{
-	            			underTile = grid[i][j];
-	            		}catch(ArrayIndexOutOfBoundsException e){
-	            			underTile = 2;
-	            		}
-	            		if(topTile+underTile == 3){	//There is exactly one of them that is land
-	            			coastKm++;
-	            		}
-	            	}
-	            }
-	            
-	            //Scan all the vertical edges
-	            for(int i=0; i < n+1; i++){
-	            	for(int j=0; j< m+1; j++){
-	            		int leftTile;
-	            		int rightTile;
-	            		try{
-	            			leftTile = grid[i][j-1];
-	            		}catch(ArrayIndexOutOfBoundsException e){
-	            			leftTile = 2;
-	            		}
-	            		try{
-	            			rightTile = grid[i][j];
-	            		}catch(ArrayIndexOutOfBoundsException e){
-	            			rightTile = 2;
-	            		}
-	            		if(leftTile+rightTile == 3){	//There is exactly one of them that is land
-	            			coastKm++;
-	            		}
-	            	}
-	            }
+	            //Run BFS from 0,0, add 1 when neighbor is land tile
+	            LinkedList<Position> visited = new LinkedList<Position>();
+	   		 	Queue<Position> queue = new LinkedList<Position>();
+	   		 	queue.add(new Position(0,0));
+	   		 	while(!queue.isEmpty()){
+	   		 		Position currentPosition = queue.remove();
+	   		 		for(int i=0; i<4; i++){
+	   		 			//For each direction
+	   		 			int addToN = (int) Math.round(Math.cos((Math.PI/2)*i)); //1 0 -1 0
+	   		 			int addToM = (int) Math.round(Math.sin((Math.PI/2)*i)); //0 1 0 -1
+	   		 			Position newPosition = new Position(currentPosition.n+addToN,currentPosition.m+addToM);
+	   		 			if(visited.contains(newPosition)){
+	   		 				continue;
+	   		 			}
+	   		 			int tileValue;	//Grid value of the new position: 1 = land, out or water = 0
+	   		 			try{
+	   		 				tileValue = grid[newPosition.n][newPosition.m];
+	   		 				if(tileValue==1){
+	   		 					coastKm++;
+	   		 					
+	   		 				}else{
+	   		 					if(!queue.contains(newPosition)){
+	   		 						queue.add(newPosition);
+	   		 					}
+	   		 				}
+	   		 			}catch(ArrayIndexOutOfBoundsException e){
+	   		 				continue;
+	   		 			}
+	   		 			
+	   		 		}
+	   		 		visited.add(currentPosition);
+	   		 	}
 	            
 	            System.out.println(coastKm);
 	        }
 	        sc.close();
 	    }
-	 
-	 public static boolean removeLake(Position p){
-		 //TODO we can speed up by updating all other lake tile visited
-		 //BFS implementation to find border tile
-		 LinkedList<Position> visited = new LinkedList<Position>();
-		 Queue<Position> queue = new LinkedList<Position>();
-		 queue.add(p);
-		 int setValue = 1;
-		 while(!queue.isEmpty()){
-			 Position p1 = queue.remove();
-			 //check if its on the border
-			 boolean leftBorder = false;
-			 boolean rightBorder = false;
-			 boolean upBorder = false;
-			 boolean downBorder = false;
-			 if(p1.n==0){
-				 //This is ocean
-				 setValue = 2;
-				 upBorder = true;
-			 }
-			 if(p1.m==0){
-				 setValue = 2;
-				 leftBorder = true;
-			 }
-			 if(p1.n==grid.length-1){
-				 setValue = 2;
-				 downBorder = true;
-			 }
-			 if(p1.m==grid[0].length-1){
-				 setValue = 2;
-				 rightBorder = true;
-			 }
-			 //add water neighbors to queue if they were not visited before
-			 Position a = new Position(p1.n+1,p1.m);
-			 if( !downBorder && grid[a.n][a.m] == 0 && !visited.contains(a)){
-				 queue.add(a);
-			 }
-			 a = new Position(p1.n,p1.m+1);
-			 if(!rightBorder && grid[a.n][a.m] == 0 && !visited.contains(a)){
-				 queue.add(a);
-			 }
-			 a = new Position(p1.n-1,p1.m);
-			 if(!upBorder && grid[a.n][a.m] == 0 && !visited.contains(a)){
-				 queue.add(a);
-			 }
-			 a = new Position(p1.n,p1.m-1);
-			 if(!leftBorder && grid[a.n][a.m] == 0 && !visited.contains(a)){
-				 queue.add(a);
-			 }
-			 
-			 //p1 is done, set it has seen
-			 visited.add(p1);
-		 }
-		 //All contiguous water explored without finding a border, its a lake
-		 //Set all tiles to 1
-		 for(Position lakeTile:visited){
-			 grid[lakeTile.n][lakeTile.m] = setValue;
-		 }
-		 return true;
-	 }
 }
 
 class Position{
@@ -151,7 +80,7 @@ class Position{
 	
 	public Position(int n, int m){
 		this.n = n;
-		this. m= m;
+		this.m= m;
 	}
 	
 	@Override
