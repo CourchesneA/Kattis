@@ -3,6 +3,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
+//TODO att a layer of water
+//then run BFS
 public class coast {
 	 static int[][] grid;
 	
